@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  jarvis-monitor:
+    build: .
+    container_name: jarvis-network-monitor
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # 数据库配置（使用外部MySQL/TiDB）
+      - DATABASE_URL=${DATABASE_URL}
+      
+      # JWT密钥
+      - JWT_SECRET=${JWT_SECRET}
+      
+      # iStoreOS路由器配置
+      - ISTOREOS_HOST=${ISTOREOS_HOST:-192.168.100.1}
+      - ISTOREOS_USERNAME=${ISTOREOS_USERNAME:-root}
+      - ISTOREOS_PASSWORD=${ISTOREOS_PASSWORD}
+      
+      # 应用配置
+      - NODE_ENV=production
+      - PORT=3000
+      
+      # OAuth配置（可选）
+      - OAUTH_SERVER_URL=${OAUTH_SERVER_URL}
+      - VITE_OAUTH_PORTAL_URL=${VITE_OAUTH_PORTAL_URL}
+      
+      # 应用信息
+      - VITE_APP_TITLE=贾维斯智能监控系统
+      - VITE_APP_LOGO=/logo.svg
+    
+    # 使用host网络模式以访问局域网设备
+    network_mode: host
+    
+    volumes:
+      # 持久化数据（如果使用SQLite）
+      - ./data:/app/data
+      
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
