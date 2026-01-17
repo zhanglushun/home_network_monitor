@@ -1,4 +1,4 @@
-import { eq, and, gte, desc, sql } from "drizzle-orm";
+import { eq, and, gte, desc, asc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser,
@@ -339,4 +339,32 @@ export async function cleanupOldData(): Promise<void> {
   } catch (error) {
     console.error('[Database] Failed to cleanup old data:', error);
   }
+}
+
+// Get historical data for the last 24 hours (for charts)
+export async function getHistoricalData24Hours() {
+  const db = await getDb();
+  if (!db) return { networkTraffic: [], routerStatus: [] };
+
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const [trafficData, statusData] = await Promise.all([
+    db
+      .select()
+      .from(networkTraffic)
+      .where(gte(networkTraffic.timestamp, twentyFourHoursAgo))
+      .orderBy(asc(networkTraffic.timestamp))
+      .limit(288), // 24 hours * 12 samples per hour = 288 samples (5 min intervals)
+    db
+      .select()
+      .from(routerStatus)
+      .where(gte(routerStatus.timestamp, twentyFourHoursAgo))
+      .orderBy(asc(routerStatus.timestamp))
+      .limit(288),
+  ]);
+
+  return {
+    networkTraffic: trafficData,
+    routerStatus: statusData,
+  };
 }

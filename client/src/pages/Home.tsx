@@ -12,6 +12,11 @@ export default function Home() {
     refetchInterval: 1000, // Refetch every second for real-time updates
   });
 
+  // Fetch historical data for charts
+  const { data: historicalData } = trpc.history.last24Hours.useQuery(undefined, {
+    refetchInterval: 60000, // Refetch every minute
+  });
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -293,6 +298,126 @@ export default function Home() {
             ))}
           </div>
         </Card>
+
+        {/* Historical Trend Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+          {/* Network Traffic Trend */}
+          <Card className="holographic-card glow-cyan-sm p-6">
+            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+              <Activity className="w-5 h-5 text-primary" />
+              网络流量趋势（24小时）
+            </h3>
+            {historicalData?.networkTraffic && historicalData.networkTraffic.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={historicalData.networkTraffic}>
+                  <XAxis
+                    dataKey="timestamp"
+                    stroke="hsl(var(--muted-foreground))"
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+                    }}
+                  />
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
+                    tickFormatter={(value) => formatSpeed(value)}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--popover))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                    labelFormatter={(value) => {
+                      const date = new Date(value as number);
+                      return date.toLocaleString();
+                    }}
+                    formatter={(value: number) => [formatSpeed(value), '']}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="uploadSpeed"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    dot={false}
+                    name="上传速度"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="downloadSpeed"
+                    stroke="hsl(var(--accent))"
+                    strokeWidth={2}
+                    dot={false}
+                    name="下载速度"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                正在加载历史数据...
+              </div>
+            )}
+          </Card>
+
+          {/* CPU Usage Trend */}
+          <Card className="holographic-card glow-cyan-sm p-6">
+            <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
+              <Cpu className="w-5 h-5 text-primary" />
+              CPU使用率趋势（24小时）
+            </h3>
+            {historicalData?.routerStatus && historicalData.routerStatus.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={historicalData.routerStatus}>
+                  <XAxis
+                    dataKey="timestamp"
+                    stroke="hsl(var(--muted-foreground))"
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+                    }}
+                  />
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
+                    tickFormatter={(value) => `${value}%`}
+                    domain={[0, 100]}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--popover))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                    labelFormatter={(value) => {
+                      const date = new Date(value as number);
+                      return date.toLocaleString();
+                    }}
+                    formatter={(value: number) => [`${value.toFixed(1)}%`, '']}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="cpuUsage"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    dot={false}
+                    name="CPU使用率"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="memoryUsage"
+                    stroke="hsl(var(--accent))"
+                    strokeWidth={2}
+                    dot={false}
+                    name="内存使用率"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                正在加载历史数据...
+              </div>
+            )}
+          </Card>
+        </div>
       </main>
 
       {/* Footer */}

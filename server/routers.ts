@@ -14,6 +14,7 @@ import {
   getBandwidthUsage,
   getRecentConnectionQuality,
   getLatestConnectionQuality,
+  getHistoricalData24Hours,
 } from "./db";
 import { z } from "zod";
 
@@ -79,7 +80,7 @@ export const appRouter = router({
   // Bandwidth Usage routes
   bandwidth: router({
     usage: publicProcedure
-      .input(z.object({ days: z.number().optional().default(7) }))
+      .input(z.object({ days: z.number().min(1).max(30).default(7) }))
       .query(async ({ input }) => {
         return await getBandwidthUsage(input.days);
       }),
@@ -95,6 +96,13 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return await getRecentConnectionQuality(input.hours);
       }),
+  }),
+
+  // Historical data routes
+  history: router({
+    last24Hours: publicProcedure.query(async () => {
+      return await getHistoricalData24Hours();
+    }),
   }),
 
   // Dashboard overview - get all latest data at once
