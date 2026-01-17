@@ -7,6 +7,7 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import "../dataCollector"; // Auto-start data collection
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
