@@ -48,10 +48,10 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold neon-text mb-2">
-                J.A.R.V.I.S.
+                贾维斯智能监控系统
               </h1>
               <p className="text-muted-foreground text-sm">
-                Just A Rather Very Intelligent System - Network Monitor
+                家庭网络实时监控 · 智能分析 · 全息展示
               </p>
             </div>
             <div className="text-right">
@@ -75,11 +75,11 @@ export default function Home() {
               <div className="p-3 rounded-lg bg-primary/20 glow-cyan-sm">
                 <Activity className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Network Traffic</h3>
+              <h3 className="text-lg font-semibold">网络流量</h3>
             </div>
             <div className="space-y-2">
               <div>
-                <div className="text-sm text-muted-foreground">Upload</div>
+                <div className="text-sm text-muted-foreground">上传速度</div>
                 <div className="text-2xl font-bold text-primary count-up">
                   {dashboardData?.networkTraffic
                     ? formatSpeed(dashboardData.networkTraffic.uploadSpeed)
@@ -87,7 +87,7 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Download</div>
+                <div className="text-sm text-muted-foreground">下载速度</div>
                 <div className="text-2xl font-bold text-accent count-up">
                   {dashboardData?.networkTraffic
                     ? formatSpeed(dashboardData.networkTraffic.downloadSpeed)
@@ -103,13 +103,13 @@ export default function Home() {
               <div className="p-3 rounded-lg bg-primary/20 glow-cyan-sm">
                 <Users className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Online Devices</h3>
+              <h3 className="text-lg font-semibold">在线设备</h3>
             </div>
             <div className="text-5xl font-bold text-primary count-up">
               {dashboardData?.onlineDevices?.length || 0}
             </div>
             <div className="text-sm text-muted-foreground mt-2">
-              Devices Connected
+              台设备在线
             </div>
           </Card>
 
@@ -119,7 +119,7 @@ export default function Home() {
               <div className="p-3 rounded-lg bg-primary/20 glow-cyan-sm">
                 <Zap className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Latency</h3>
+              <h3 className="text-lg font-semibold">网络延迟</h3>
             </div>
             <div className="space-y-2">
               {dashboardData?.latency?.slice(0, 2).map((lat, idx) => (
@@ -139,11 +139,11 @@ export default function Home() {
               <div className="p-3 rounded-lg bg-primary/20 glow-cyan-sm">
                 <Cpu className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-lg font-semibold">Router Status</h3>
+              <h3 className="text-lg font-semibold">路由器状态</h3>
             </div>
             <div className="space-y-2">
               <div>
-                <div className="text-sm text-muted-foreground">CPU Usage</div>
+                <div className="text-sm text-muted-foreground">CPU使用率</div>
                 <div className="text-xl font-bold text-primary count-up">
                   {dashboardData?.routerStatus
                     ? `${dashboardData.routerStatus.cpuUsage.toFixed(1)}%`
@@ -151,7 +151,7 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">Memory</div>
+                <div className="text-sm text-muted-foreground">内存使用率</div>
                 <div className="text-xl font-bold text-accent count-up">
                   {dashboardData?.routerStatus
                     ? `${dashboardData.routerStatus.memoryUsage.toFixed(1)}%`
@@ -168,11 +168,11 @@ export default function Home() {
           <Card className="holographic-card glow-cyan-sm p-6">
             <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <Cpu className="w-5 h-5 text-primary" />
-              System Resources
+              系统资源
             </h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">CPU Usage</span>
+                <span className="text-muted-foreground">CPU使用率</span>
                 <span className="text-lg font-bold text-primary">
                   {dashboardData?.routerStatus
                     ? `${dashboardData.routerStatus.cpuUsage.toFixed(1)}%`
@@ -180,7 +180,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Memory Usage</span>
+                <span className="text-muted-foreground">内存使用率</span>
                 <span className="text-lg font-bold text-primary">
                   {dashboardData?.routerStatus
                     ? `${dashboardData.routerStatus.memoryUsage.toFixed(1)}%`
@@ -188,7 +188,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Temperature</span>
+                <span className="text-muted-foreground">设备温度</span>
                 <span className="text-lg font-bold text-primary">
                   {dashboardData?.routerStatus
                     ? `${dashboardData.routerStatus.temperature.toFixed(1)}°C`
@@ -196,7 +196,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Uptime</span>
+                <span className="text-muted-foreground">运行时间</span>
                 <span className="text-lg font-bold text-primary">
                   {dashboardData?.routerStatus
                     ? formatUptime(dashboardData.routerStatus.uptime)
@@ -204,7 +204,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Load Average</span>
+                <span className="text-muted-foreground">负载平均值</span>
                 <span className="text-lg font-bold text-primary">
                   {dashboardData?.routerStatus
                     ? dashboardData.routerStatus.loadAverage.toFixed(2)
@@ -218,11 +218,11 @@ export default function Home() {
           <Card className="holographic-card glow-cyan-sm p-6">
             <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
               <Signal className="w-5 h-5 text-primary" />
-              Connection Quality
+              连接质量
             </h3>
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Signal Strength</span>
+                <span className="text-muted-foreground">信号强度</span>
                 <span className="text-lg font-bold text-primary">
                   {dashboardData?.connectionQuality
                     ? `${dashboardData.connectionQuality.signalStrength.toFixed(1)}%`
@@ -230,7 +230,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Stability</span>
+                <span className="text-muted-foreground">连接稳定性</span>
                 <span className="text-lg font-bold text-primary">
                   {dashboardData?.connectionQuality
                     ? `${dashboardData.connectionQuality.connectionStability.toFixed(1)}%`
@@ -238,7 +238,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Error Rate</span>
+                <span className="text-muted-foreground">错误率</span>
                 <span className="text-lg font-bold text-destructive">
                   {dashboardData?.connectionQuality
                     ? `${dashboardData.connectionQuality.errorRate.toFixed(2)}%`
@@ -246,7 +246,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Retransmission Rate</span>
+                <span className="text-muted-foreground">重传率</span>
                 <span className="text-lg font-bold text-destructive">
                   {dashboardData?.connectionQuality
                     ? `${dashboardData.connectionQuality.retransmissionRate.toFixed(2)}%`
@@ -261,7 +261,7 @@ export default function Home() {
         <Card className="holographic-card glow-cyan-sm p-6">
           <h3 className="text-xl font-semibold mb-6 flex items-center gap-2">
             <Network className="w-5 h-5 text-primary" />
-            Connected Devices
+            已连接设备
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {dashboardData?.onlineDevices?.map((device, idx) => (
@@ -276,7 +276,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="text-sm text-muted-foreground mb-1">
-                  {device.hostname || "Unknown Device"}
+                  {device.hostname || "未知设备"}
                 </div>
                 <div className="text-xs text-muted-foreground">
                   {device.macAddress}
@@ -299,9 +299,9 @@ export default function Home() {
       <footer className="border-t border-border/50 backdrop-blur-sm mt-auto">
         <div className="container py-4">
           <div className="text-center text-sm text-muted-foreground">
-            <p>Home Network Monitor - Powered by J.A.R.V.I.S.</p>
+            <p>家庭网络监控系统 · 贾维斯智能助手驱动</p>
             <p className="text-xs mt-1">
-              Real-time monitoring • Data updated every second
+              实时监控 · 每秒更新数据
             </p>
           </div>
         </div>
