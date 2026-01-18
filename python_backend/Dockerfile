@@ -1,23 +1,32 @@
-# 多阶段构建：前端 + 后端
+# 多阶段构建：前端 + Python后端
 
 # ============================================
 # 阶段1: 构建React前端
 # ============================================
 FROM node:20-alpine AS frontend-builder
 
-WORKDIR /frontend
+WORKDIR /build
 
-# 复制前端package文件
-COPY client/package*.json ./
+# 复制package文件
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
 
-# 安装前端依赖
-RUN npm install
+# 安装pnpm
+RUN npm install -g pnpm
+
+# 安装依赖
+RUN pnpm install --frozen-lockfile
 
 # 复制前端源代码
-COPY client/ ./
+COPY client/ ./client/
+COPY vite.config.ts ./
+COPY tsconfig.json ./
+COPY tsconfig.node.json ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
 
 # 构建前端
-RUN npm run build
+RUN pnpm run build
 
 # ============================================
 # 阶段2: 构建Python后端
@@ -36,7 +45,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 复制Python依赖文件
-COPY requirements.txt .
+COPY python_backend/requirements.txt .
 
 # 安装Python依赖
 RUN pip install --no-cache-dir -r requirements.txt
@@ -45,7 +54,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY python_backend/ .
 
 # 从前端构建阶段复制构建产物
-COPY --from=frontend-builder /frontend/dist /app/client/dist
+COPY --from=frontend-builder /build/dist ./client/dist
 
 # 暴露端口
 EXPOSE 3001
