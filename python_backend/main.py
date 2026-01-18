@@ -45,16 +45,22 @@ app.add_middleware(
 app.include_router(api_router, prefix="/api")
 
 # 静态文件服务（前端）
-if os.path.exists("../client/dist"):
-    app.mount("/assets", StaticFiles(directory="../client/dist/assets"), name="assets")
+# 支持本地开发和Docker环境
+frontend_dist = "client/dist" if os.path.exists("client/dist") else "../client/dist"
+
+if os.path.exists(frontend_dist):
+    logger.info(f"找到前端构建文件: {frontend_dist}")
+    app.mount("/assets", StaticFiles(directory=f"{frontend_dist}/assets"), name="assets")
     
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
         """服务前端SPA"""
-        file_path = f"../client/dist/{full_path}"
+        file_path = f"{frontend_dist}/{full_path}"
         if os.path.exists(file_path) and os.path.isfile(file_path):
             return FileResponse(file_path)
-        return FileResponse("../client/dist/index.html")
+        return FileResponse(f"{frontend_dist}/index.html")
+else:
+    logger.warning("未找到前端构建文件，只提供API服务")
 
 @app.on_event("startup")
 async def startup_event():
