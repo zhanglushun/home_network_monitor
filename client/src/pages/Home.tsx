@@ -126,15 +126,29 @@ export default function Home() {
               </div>
               <h3 className="text-lg font-semibold">网络延迟</h3>
             </div>
-            <div className="space-y-2">
-              {dashboardData?.latency?.slice(0, 2).map((lat, idx) => (
-                <div key={idx}>
-                  <div className="text-sm text-muted-foreground">{lat.target}</div>
-                  <div className="text-xl font-bold text-primary count-up">
-                    {lat.latency.toFixed(1)} ms
-                  </div>
+            <div className="space-y-3">
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">国际网络</div>
+                <div className="text-2xl font-bold text-primary count-up">
+                  {dashboardData?.latency?.[0]?.latency
+                    ? `${dashboardData.latency[0].latency.toFixed(1)} ms`
+                    : "-- ms"}
                 </div>
-              ))}
+                <div className="text-xs text-muted-foreground mt-1">
+                  Google · YouTube · Netflix
+                </div>
+              </div>
+              <div className="border-t border-border/30 pt-3">
+                <div className="text-sm text-muted-foreground mb-1">国内网络</div>
+                <div className="text-2xl font-bold text-accent count-up">
+                  {dashboardData?.latency?.[1]?.latency
+                    ? `${dashboardData.latency[1].latency.toFixed(1)} ms`
+                    : "-- ms"}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  百度 · 阿里
+                </div>
+              </div>
             </div>
           </Card>
 

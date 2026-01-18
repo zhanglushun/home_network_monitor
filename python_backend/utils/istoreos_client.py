@@ -412,6 +412,79 @@ class IStoreOSClient:
             logger.error(f"[iStoreOS] 获取网络延迟失败: {e}")
             return self._get_mock_latency(target)
     
+    async def get_multi_target_latency(self) -> Dict:
+        """
+        获取多目标网络延迟
+        测试国际网络（Google、YouTube、Netflix）和国内网络
+        """
+        try:
+            # 定义测试目标
+            targets = {
+                "international": [
+                    {"name": "Google", "host": "8.8.8.8"},
+                    {"name": "YouTube", "host": "youtube.com"},
+                    {"name": "Netflix", "host": "netflix.com"},
+                ],
+                "domestic": [
+                    {"name": "百度", "host": "baidu.com"},
+                    {"name": "阿里", "host": "223.5.5.5"},
+                ]
+            }
+            
+            results = {
+                "international": {},
+                "domestic": {},
+                "international_avg": 0,
+                "domestic_avg": 0,
+            }
+            
+            # 测试国际网络
+            international_latencies = []
+            for target in targets["international"]:
+                latency_data = await self.get_network_latency(target["host"])
+                results["international"][target["name"]] = latency_data
+                if latency_data["latency"] > 0:
+                    international_latencies.append(latency_data["latency"])
+            
+            # 测试国内网络
+            domestic_latencies = []
+            for target in targets["domestic"]:
+                latency_data = await self.get_network_latency(target["host"])
+                results["domestic"][target["name"]] = latency_data
+                if latency_data["latency"] > 0:
+                    domestic_latencies.append(latency_data["latency"])
+            
+            # 计算平均延迟
+            if international_latencies:
+                results["international_avg"] = sum(international_latencies) / len(international_latencies)
+            
+            if domestic_latencies:
+                results["domestic_avg"] = sum(domestic_latencies) / len(domestic_latencies)
+            
+            logger.info(f"[iStoreOS] 多目标延迟测试完成: 国际={results['international_avg']:.1f}ms, 国内={results['domestic_avg']:.1f}ms")
+            return results
+            
+        except Exception as e:
+            logger.error(f"[iStoreOS] 多目标延迟测试失败: {e}")
+            return self._get_mock_multi_latency()
+    
+    def _get_mock_multi_latency(self) -> Dict:
+        """返回模拟多目标延迟数据"""
+        import random
+        return {
+            "international": {
+                "Google": {"target": "8.8.8.8", "latency": random.uniform(150, 250), "packet_loss": 0, "jitter": random.uniform(5, 15)},
+                "YouTube": {"target": "youtube.com", "latency": random.uniform(160, 260), "packet_loss": 0, "jitter": random.uniform(5, 15)},
+                "Netflix": {"target": "netflix.com", "latency": random.uniform(170, 270), "packet_loss": 0, "jitter": random.uniform(5, 15)},
+            },
+            "domestic": {
+                "百度": {"target": "baidu.com", "latency": random.uniform(10, 30), "packet_loss": 0, "jitter": random.uniform(1, 5)},
+                "阿里": {"target": "223.5.5.5", "latency": random.uniform(15, 35), "packet_loss": 0, "jitter": random.uniform(1, 5)},
+            },
+            "international_avg": random.uniform(150, 250),
+            "domestic_avg": random.uniform(10, 30),
+        }
+    
     def _get_mock_latency(self, target: str) -> Dict:
         """返回模拟延迟数据"""
         import random
@@ -428,13 +501,24 @@ class IStoreOSClient:
         基于网络延迟和丢包率计算
         """
         try:
-            # 获取延迟数据
-            latency_data = await self.get_network_latency()
+            # 获取多目标延迟数据
+            multi_latency = await self.get_multi_target_latency()
             
-            # 根据延迟和丢包率计算连接质量
-            latency = latency_data.get('latency', 0)
-            packet_loss = latency_data.get('packet_loss', 0)
-            jitter = latency_data.get('jitter', 0)
+            # 使用国内平均延迟计算连接质量
+            latency = multi_latency.get('domestic_avg', 0)
+            
+            # 从国内数据中获取丢包率和抖动（取平均值）
+            domestic_data = multi_latency.get('domestic', {})
+            packet_losses = []
+            jitters = []
+            for target_data in domestic_data.values():
+                if target_data.get('packet_loss', 0) > 0:
+                    packet_losses.append(target_data['packet_loss'])
+                if target_data.get('jitter', 0) > 0:
+                    jitters.append(target_data['jitter'])
+            
+            packet_loss = sum(packet_losses) / len(packet_losses) if packet_losses else 0
+            jitter = sum(jitters) / len(jitters) if jitters else 0
             
             # 信号强度（基于延迟，延迟越低信号越强）
             if latency < 20:
