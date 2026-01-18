@@ -53,10 +53,10 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold neon-text mb-2">
-                贾维斯智能监控系统
+                家庭网络监控
               </h1>
               <p className="text-muted-foreground text-sm">
-                家庭网络实时监控 · 智能分析 · 全息展示
+                实时监控 · 智能分析 · 数据可视化
               </p>
             </div>
             <div className="text-right">
@@ -424,7 +424,7 @@ export default function Home() {
       <footer className="border-t border-border/50 backdrop-blur-sm mt-auto">
         <div className="container py-4">
           <div className="text-center text-sm text-muted-foreground">
-            <p>家庭网络监控系统 · 贾维斯智能助手驱动</p>
+            <p>家庭网络监控系统</p>
             <p className="text-xs mt-1">
               实时监控 · 每秒更新数据
             </p>
